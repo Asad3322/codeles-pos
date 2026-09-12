@@ -1,0 +1,159 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f6f8fb;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --card-elevated: #f8fafc;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #15803d;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #334155;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --accent: #f7fee7;
+  --accent-foreground: #365314;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #84cc16;
+  --radius: 0.75rem;
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e2e8f0;
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --header-border: #e2e8f0;
+}
+
+.dark {
+  --background: #090d16;
+  --foreground: #f8fafc;
+  --card: #0f172a;
+  --card-foreground: #f8fafc;
+  --card-elevated: #172033;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  --primary: #16a34a;
+  --primary-foreground: #ffffff;
+  --secondary: #172033;
+  --secondary-foreground: #cbd5e1;
+  --muted: #172033;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #84cc16;
+  --sidebar-bg: #0b1120;
+  --sidebar-border: #1e293b;
+  --header-bg: rgba(13, 20, 34, 0.95);
+  --header-border: #1e293b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-elevated: var(--card-elevated);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-lg: var(--radius);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle, smooth transitions for appropriate surface properties (180ms) */
+body, header, aside, [data-theme-surface] {
+  transition: background-color 180ms ease,
+              border-color 180ms ease,
+              color 180ms ease,
+              box-shadow 180ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body, header, aside, [data-theme-surface], * {
+    transition: none !important;
+  }
+}
+
+* {
+  border-color: var(--border);
+}
+
+/* Premium Table Base Styling */
+table thead tr {
+  border-bottom: 1px solid var(--border);
+}
+table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background-color 150ms ease;
+}
+table tbody tr:hover {
+  background-color: rgba(241, 245, 249, 0.6);
+}
+.dark table tbody tr:hover {
+  background-color: rgba(30, 41, 59, 0.4);
+}
+
+/* Harmonize neutral palette classes with central design tokens */
+.border-zinc-100, .border-zinc-200, .border-slate-100, .border-slate-200 {
+  border-color: var(--border);
+}
+.dark .border-zinc-800, .dark .border-zinc-700, .dark .border-slate-800, .dark .border-slate-700 {
+  border-color: var(--border);
+}
+.text-zinc-950, .text-zinc-900 {
+  color: var(--foreground);
+}
+.text-zinc-500, .text-zinc-400 {
+  color: var(--muted-foreground);
+}
+.bg-zinc-50, .bg-zinc-100 {
+  background-color: var(--secondary);
+}
+.dark .bg-zinc-900, .dark .bg-zinc-950 {
+  background-color: var(--card);
+}
+
+/* Subtle clean scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.45);
+}
