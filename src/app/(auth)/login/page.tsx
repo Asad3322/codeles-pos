@@ -29,7 +29,7 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "admin@pos.local", password: "Admin@123456" },
+    defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = async (data: LoginInput) => {
@@ -151,7 +151,7 @@ export default function LoginPage() {
         </Card>
 
         <p className="text-center text-xs text-slate-400 dark:text-slate-500">
-          Codeles POS · Pakistan Regional Edition (PKR)
+          Codeles POS &middot; Pakistan Regional Edition (PKR)
         </p>
       </div>
     </div>

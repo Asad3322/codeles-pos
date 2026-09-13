@@ -7,9 +7,12 @@ import { NextResponse } from "next/server";
 const { auth } = NextAuth(authConfig);
 
 const publicRoutes = [
+  "/",
   "/login",
   "/forgot-password",
   "/reset-password",
+  "/setup",
+  "/api/setup",
   "/api/auth",
   "/favicon.svg",
   "/icon.svg",
@@ -98,3 +101,4 @@ export const config = {
     "/((?!api/auth|_next/static|_next/image|favicon\\.ico|favicon\\.svg|icon\\.svg|logo|manifest\\.json|icons|sw\\.js|firebase-messaging-sw\\.js|.*\\.png$|.*\\.svg$).*)",
   ],
 };
+
