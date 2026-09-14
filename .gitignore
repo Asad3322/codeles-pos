@@ -37,6 +37,14 @@ next-env.d.ts
 /backups/
 codeles-startup.log
 
-CodelesPOS-Start.cmd
+/CodelesPOS-Start.cmd
 
 ecosystem.config.cjs
+# Codeles POS installer generated files
+/installer/staging/
+
+/installer/output/
+
+# Local Codeles POS machine scripts
+/CodelesPOS-Backup.ps1
+/CodelesPOS-Hidden.vbs
