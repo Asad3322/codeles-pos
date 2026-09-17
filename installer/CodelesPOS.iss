@@ -33,6 +33,9 @@ Source: "staging\codeles-pos.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; It is deleted automatically after Setup finishes.
 Source: "scripts\generate-config.js"; DestDir: "{tmp}"; Flags: dontcopy
 
+[Icons]
+Name: "{commonstartup}\Codeles POS"; Filename: "{sys}\wscript.exe"; Parameters: """{app}\launcher\CodelesPOS-Hidden.vbs"""; WorkingDir: "{app}\launcher"
+Name: "{commondesktop}\Codeles POS"; Filename: "{sys}\wscript.exe"; Parameters: """{app}\launcher\CodelesPOS-Open.vbs"""; WorkingDir: "{app}\launcher"; IconFilename: "{app}\codeles-pos.ico"
 [Run]
 Filename: "{app}\runtime\node.exe"; Parameters: """{tmp}\generate-config.js"" ""{app}\app"""; Flags: runhidden waituntilterminated; BeforeInstall: ExtractConfigGenerator
 
@@ -41,3 +44,5 @@ procedure ExtractConfigGenerator;
 begin
   ExtractTemporaryFile('generate-config.js');
 end;
+
+
