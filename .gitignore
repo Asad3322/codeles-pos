@@ -48,3 +48,6 @@ ecosystem.config.cjs
 # Local Codeles POS machine scripts
 /CodelesPOS-Backup.ps1
 /CodelesPOS-Hidden.vbs
+
+/installer/prerequisites/
+/installer/*.pre-mongodb-backup

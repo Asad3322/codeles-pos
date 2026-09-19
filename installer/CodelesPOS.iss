@@ -24,25 +24,76 @@ PrivilegesRequired=admin
 UninstallDisplayIcon={app}\codeles-pos.ico
 
 [Files]
+; Codeles POS application
 Source: "staging\app\*"; DestDir: "{app}\app"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+; Bundled Node.js runtime
 Source: "staging\runtime\*"; DestDir: "{app}\runtime"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+; Codeles POS launchers
 Source: "staging\launcher\*"; DestDir: "{app}\launcher"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+; Application icon
 Source: "staging\codeles-pos.ico"; DestDir: "{app}"; Flags: ignoreversion
 
-; Temporary installer helper.
-; It is deleted automatically after Setup finishes.
+; Temporary configuration generator
 Source: "scripts\generate-config.js"; DestDir: "{tmp}"; Flags: dontcopy
 
-[Icons]
-Name: "{commonstartup}\Codeles POS"; Filename: "{sys}\wscript.exe"; Parameters: """{app}\launcher\CodelesPOS-Hidden.vbs"""; WorkingDir: "{app}\launcher"
-Name: "{commondesktop}\Codeles POS"; Filename: "{sys}\wscript.exe"; Parameters: """{app}\launcher\CodelesPOS-Open.vbs"""; WorkingDir: "{app}\launcher"; IconFilename: "{app}\codeles-pos.ico"
-[Run]
-Filename: "{app}\runtime\node.exe"; Parameters: """{tmp}\generate-config.js"" ""{app}\app"""; Flags: runhidden waituntilterminated; BeforeInstall: ExtractConfigGenerator
+; MongoDB prerequisite
+; Extracted only when MongoDB installation is required
+Source: "prerequisites\mongodb-windows-x86_64-8.3.2-signed.msi"; DestDir: "{tmp}"; Flags: dontcopy
 
+[Dirs]
+Name: "{commonappdata}\Codeles POS"
+Name: "{commonappdata}\Codeles POS\MongoDB"
+Name: "{commonappdata}\Codeles POS\MongoDB\data"
+Name: "{commonappdata}\Codeles POS\MongoDB\log"
+Name: "{commonappdata}\Codeles POS\backups"
+Name: "{commonappdata}\Codeles POS\logs"
+
+[Icons]
+; Start Codeles POS automatically when Windows starts
+Name: "{commonstartup}\Codeles POS"; Filename: "{sys}\wscript.exe"; Parameters: """{app}\launcher\CodelesPOS-Hidden.vbs"""; WorkingDir: "{app}\launcher"
+
+; Desktop launcher
+Name: "{commondesktop}\Codeles POS"; Filename: "{sys}\wscript.exe"; Parameters: """{app}\launcher\CodelesPOS-Open.vbs"""; WorkingDir: "{app}\launcher"; IconFilename: "{app}\codeles-pos.ico"
+
+[Run]
+; Install MongoDB silently when the MongoDB Windows service is missing.
+; Store database files outside Program Files and do not install Compass.
+Filename: "{sys}\msiexec.exe"; Parameters: "/i ""{tmp}\mongodb-windows-x86_64-8.3.2-signed.msi"" /qn /norestart MONGO_SERVICE_INSTALL=1 MONGO_SERVICE_NAME=""MongoDB"" MONGO_SERVICE_ACCOUNT_TYPE=""ServiceLocalNetwork"" MONGO_DATA_PATH=""{commonappdata}\Codeles POS\MongoDB\data"" MONGO_LOG_PATH=""{commonappdata}\Codeles POS\MongoDB\log"" SHOULD_INSTALL_COMPASS=0"; Flags: runhidden waituntilterminated; Check: ShouldInstallMongoDB; BeforeInstall: ExtractMongoDBInstaller
+; Generate production configuration.
+; Existing configuration is preserved during upgrades.
+Filename: "{app}\runtime\node.exe"; Parameters: """{tmp}\generate-config.js"" ""{app}\app"""; Flags: runhidden waituntilterminated; BeforeInstall: ExtractConfigGenerator
 [Code]
+
+function IsMongoDBInstalled: Boolean;
+begin
+  { Detect the MongoDB Windows service }
+  Result := RegKeyExists(
+    HKLM64,
+    'SYSTEM\CurrentControlSet\Services\MongoDB'
+  );
+end;
+function ShouldInstallMongoDB: Boolean;
+begin
+  Result := not IsMongoDBInstalled;
+end;
+
+
+procedure ExtractMongoDBInstaller;
+begin
+  { Only extract MongoDB when it is not already installed }
+  if not IsMongoDBInstalled then
+  begin
+    ExtractTemporaryFile(
+      'mongodb-windows-x86_64-8.3.2-signed.msi'
+    );
+  end;
+end;
+
+
 procedure ExtractConfigGenerator;
 begin
   ExtractTemporaryFile('generate-config.js');
 end;
-
-
