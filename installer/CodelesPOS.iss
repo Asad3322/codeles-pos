@@ -43,6 +43,15 @@ Source: "scripts\generate-config.js"; DestDir: "{tmp}"; Flags: dontcopy
 ; Extracted only when MongoDB installation is required
 Source: "prerequisites\mongodb-windows-x86_64-8.3.2-signed.msi"; DestDir: "{tmp}"; Flags: dontcopy
 
+; MongoDB backup and restore tools
+Source: "prerequisites\mongodb-tools\mongodump.exe"; DestDir: "{app}\tools"; Flags: ignoreversion
+Source: "prerequisites\mongodb-tools\mongorestore.exe"; DestDir: "{app}\tools"; Flags: ignoreversion
+
+; Codeles POS automatic backup script
+Source: "backup\CodelesPOS-Backup.ps1"; DestDir: "{app}\backup"; Flags: ignoreversion
+; Codeles POS database restore script
+Source: "backup\CodelesPOS-Restore.ps1"; DestDir: "{app}\backup"; Flags: ignoreversion
+
 [Dirs]
 Name: "{commonappdata}\Codeles POS"
 Name: "{commonappdata}\Codeles POS\MongoDB"
@@ -62,6 +71,9 @@ Name: "{commondesktop}\Codeles POS"; Filename: "{sys}\wscript.exe"; Parameters: 
 ; Install MongoDB silently when the MongoDB Windows service is missing.
 ; Store database files outside Program Files and do not install Compass.
 Filename: "{sys}\msiexec.exe"; Parameters: "/i ""{tmp}\mongodb-windows-x86_64-8.3.2-signed.msi"" /qn /norestart MONGO_SERVICE_INSTALL=1 MONGO_SERVICE_NAME=""MongoDB"" MONGO_SERVICE_ACCOUNT_TYPE=""ServiceLocalNetwork"" MONGO_DATA_PATH=""{commonappdata}\Codeles POS\MongoDB\data"" MONGO_LOG_PATH=""{commonappdata}\Codeles POS\MongoDB\log"" SHOULD_INSTALL_COMPASS=0"; Flags: runhidden waituntilterminated; Check: ShouldInstallMongoDB; BeforeInstall: ExtractMongoDBInstaller
+; Create/update the automatic daily Codeles POS database backup task.
+Filename: "{sys}\schtasks.exe"; Parameters: "/Create /F /SC DAILY /ST 23:00 /TN ""Codeles POS Daily Backup"" /TR ""powershell.exe -NoProfile -ExecutionPolicy Bypass -File \""{app}\backup\CodelesPOS-Backup.ps1\"""" /RU SYSTEM"; Flags: runhidden waituntilterminated
+
 ; Generate production configuration.
 ; Existing configuration is preserved during upgrades.
 Filename: "{app}\runtime\node.exe"; Parameters: """{tmp}\generate-config.js"" ""{app}\app"""; Flags: runhidden waituntilterminated; BeforeInstall: ExtractConfigGenerator
